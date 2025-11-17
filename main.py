@@ -60,12 +60,55 @@ class Game:
             if obj.name == 'player' and obj.pos == player_start_pos:
                 self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
 
+    def fade(self, fade_in=True, speed=15):
+        fade_surface = pygame.Surface(self.screen.get_size())
+        fade_surface.fill(BACKGROUND_COLOR)
+        if fade_in:
+            for alpha in range(255, -1, -speed):
+                fade_surface.set_alpha(alpha)
+                self.screen.blit(fade_surface, (0, 0))
+                pygame.display.update()
+                self.clock.tick(60)
+
+        else:
+            for alpha in range(0, 256, speed):
+                fade_surface.set_alpha(alpha)
+                self.screen.blit(fade_surface, (0, 0))
+                pygame.display.update()
+                self.clock.tick(60)
+
+
     def transition_check(self):
         sprites = [sprite for sprite in self.transition_sprites if sprite.rect.colliderect(self.player.rect)]
         if sprites:
             for sprite in sprites:
-                return sprite.target_map, sprite.current_map
-                #print(f"Transition Check Successful, target: {sprite.target_map}, current: {sprite.current_map}")
+                target_map = sprite.target_map
+                current_map = sprite.current_map
+                print(f"Transition triggered: {sprite.current_map} -> {sprite.target_map}")
+
+                #fade out
+                self.fade(fade_in=False)
+
+                # unload all groups
+                self.all_sprites.empty()
+                self.collision_sprites.empty()
+                self.transition_sprites.empty()
+
+                # load new map
+                new_tmx = self.tmx_maps[target_map]
+
+                # extract player_start_pos from player spawn object
+                for obj in new_tmx.get_layer_by_name('Entities'):
+                    if obj.name == 'player':
+                        player_start_pos = obj.pos
+                        break
+
+                if player_start_pos:
+                    self.setup(new_tmx, player_start_pos)
+
+                # fade in
+                self.fade(fade_in=True)
+
 
     # Main logic loop function
     def run(self):
