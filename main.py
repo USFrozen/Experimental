@@ -23,8 +23,8 @@ class Game:
 
         self.import_assets()
         self.setup(
-            self.tmx_maps['world'], 'player_house'
-            #self.tmx_maps['player_house'], 'world'
+            #self.tmx_maps['world'], 'player_house'
+            self.tmx_maps['player_house'], 'spawn'
             )
 
 
