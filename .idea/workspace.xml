@@ -11,6 +11,17 @@
       <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TMX/player_house.tmx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TMX/world.tmx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TSX/FDR_Castle.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TSX/FD_Dreams.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TSX/FD_Forest.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TSX/FD_Grasslands.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TSX/FD_Ground_Tiles.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TSX/FD_Village.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TSX/RA_Village.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TSX/interior_carpets.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/TSX/u_fd_interior.tsx" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/entities.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/groups.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/settings.py" afterDir="false" />
