@@ -2,6 +2,7 @@ from settings import *
 from sprites import Sprite, TransitionSprite, CollisionSprite
 from entities import *
 from groups import AllSprites
+from helpers import screen_fade
 
 class Game:
     def __init__(self):
@@ -60,23 +61,6 @@ class Game:
             if obj.name == 'player' and obj.pos == player_start_pos:
                 self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
 
-    def fade(self, fade_in=True, speed=15):
-        fade_surface = pygame.Surface(self.screen.get_size())
-        fade_surface.fill(BACKGROUND_COLOR)
-        if fade_in:
-            for alpha in range(255, -1, -speed):
-                fade_surface.set_alpha(alpha)
-                self.screen.blit(fade_surface, (0, 0))
-                pygame.display.update()
-                self.clock.tick(60)
-
-        else:
-            for alpha in range(0, 256, speed):
-                fade_surface.set_alpha(alpha)
-                self.screen.blit(fade_surface, (0, 0))
-                pygame.display.update()
-                self.clock.tick(60)
-
 
     def transition_check(self):
         sprites = [sprite for sprite in self.transition_sprites if sprite.rect.colliderect(self.player.rect)]
@@ -87,7 +71,7 @@ class Game:
                 print(f"Transition triggered: {sprite.current_map} -> {sprite.target_map}")
 
                 #fade out
-                self.fade(fade_in=False)
+                screen_fade(self, fade_in=False)
 
                 # unload all groups
                 self.all_sprites.empty()
@@ -107,7 +91,7 @@ class Game:
                     self.setup(new_tmx, player_start_pos)
 
                 # fade in
-                self.fade(fade_in=True)
+                screen_fade(self, fade_in=True)
 
 
     # Main logic loop function

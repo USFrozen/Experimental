@@ -18,3 +18,8 @@ base_dir = os.path.dirname(__file__) # Gets current directory
 # Using os.path to point to assets so this hopefully wont break when not on Linux
 world = os.path.join(base_dir, 'assets', 'TMX', 'world.tmx')
 player_house = os.path.join(base_dir, 'assets', 'TMX', 'player_house.tmx')
+
+# Animation settings
+sheet_path = os.path.join(base_dir, 'assets', 'PNG')
+frame_width = 24
+frame_height = 24
