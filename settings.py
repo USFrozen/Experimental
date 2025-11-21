@@ -20,6 +20,8 @@ world = os.path.join(base_dir, 'assets', 'TMX', 'world.tmx')
 player_house = os.path.join(base_dir, 'assets', 'TMX', 'player_house.tmx')
 
 # Animation settings
-sheet_path = os.path.join(base_dir, 'assets', 'PNG')
-frame_width = 24
-frame_height = 24
+characters = os.path.join(base_dir, 'assets', 'PNG', 'characters')
+tile_width = 24
+tile_height = 24
+ANIMATION_SPEED = 6
+player_sprite = "Character_063"

@@ -69,7 +69,7 @@ class Monster_env(pygame.sprite.Sprite):
         self.rect = self.image.get_frect(topleft=pos)
 
 # From .mtx Entities layer, used for objects that can be interacted with
-class Entity(pygame.sprite.Sprite):
+class MapEntity(pygame.sprite.Sprite):
     def __init__(self, pos, groups, obj, tmx_data):
         super().__init__(groups)
 
@@ -80,5 +80,3 @@ class Entity(pygame.sprite.Sprite):
             self.image.fill('magenta')
 
         self.rect = self.image.get_frect(topleft=pos)
-
-

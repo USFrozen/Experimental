@@ -1,8 +1,8 @@
 from settings import *
-from sprites import Sprite, TransitionSprite, CollisionSprite
+from sprites import Sprite, TransitionSprite, CollisionSprite, AnimatedSprite
 from entities import *
 from groups import AllSprites
-from helpers import screen_fade
+from helpers import *
 
 class Game:
     def __init__(self):
@@ -36,6 +36,10 @@ class Game:
             'player_house': load_pygame(player_house)
             }
 
+        self.world_animations = {
+            'characters': import_characters(characters),
+        }
+
     # Generates object class instances based on data in Tiled maps
     # Each map layer is being looked at individually by name so names need to be consistent between maps
     def setup(self, tmx_map, player_start_pos):
@@ -43,23 +47,33 @@ class Game:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
                 Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
 
+        # Monster environment objects, areas and tiles where monsters can spawn
         for obj in tmx_map.get_layer_by_name('Monsters'):
             self.monster_env = Monster_env((obj.x, obj.y), self.all_sprites, obj, tmx_map)
 
+        # Collision objects, stops player from walking in area
         for obj in tmx_map.get_layer_by_name('Collisions'):
             self.collision = CollisionSprite((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites)
 
+        # Transition objects, warps player to target map
         for obj in tmx_map.get_layer_by_name('Transitions'):
             if obj.name == 'transition':
                 self.transition = TransitionSprite((obj.x, obj.y), (obj.width, obj.height), obj.properties['target_map'], obj.properties['current_map'], self.transition_sprites)
 
+        # All remaining entities in layer that are not player objects
         for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name != 'player':
-                self.entities = Entity((obj.x, obj.y), self.all_sprites, obj, tmx_map)
+                self.entities = MapEntity((obj.x, obj.y), self.all_sprites, obj, tmx_map)
 
+        # Player character
         for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name == 'player' and obj.pos == player_start_pos:
-                self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
+                self.player = Player(
+                    pos = (obj.x, obj.y),
+                    #frames = self.world_animations['characters'][player_sprite],
+                    groups = self.all_sprites,
+                    collision_sprites = self.collision_sprites
+                )
 
 
     def transition_check(self):

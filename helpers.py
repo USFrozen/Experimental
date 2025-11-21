@@ -1,4 +1,6 @@
 from settings import *
+import re
+
 
 # Transition screen effect used before and after all sprites unload and load from new map
 def screen_fade(self, fade_in=True, speed=15):
@@ -17,7 +19,77 @@ def screen_fade(self, fade_in=True, speed=15):
             pygame.display.update()
             self.clock.tick(60)
 
+# Used for importing single image files
+def import_image(*path, alpha=True, ext="png"):
+    full_path = os.path.join(*path) + f'.{ext}'
+    image = pygame.image.load(full_path).convert_alpha() if alpha else pygame.image.load(full_path).convert()
+    return image
 
-# takes sprite png and splits it into frames for animations
-def load_sprite_sheet(sheet_path, frame_width, frame_height, rows, cols):
-    pass
+# Imports all images in a specified directory without preserving name data
+# Thanks to Copilot, it also makes it so files with names that aren't numbers won't crash the game
+def import_dirs(*path):
+    frames = []
+    for directory, subdirectory, image_names in os.walk(*path):
+        def num_key(name):
+            match = re.match(r"(\d+)", name)
+            return int(match.group(1)) if match else float("inf")
+
+        for image_name in sorted(image_names, key=num_key):
+            full_path = os.path.join(directory, image_name)
+            image = pygame.image.load(full_path).convert_alpha()
+            frames.append(image)
+    return frames
+
+
+# Imports all images but preserves names
+def import_dir_dict(*path):
+    frames = {}
+    for directory, subdirectory, image_names in os.walk(os.path.join(*path)):
+        for image_name in image_names:
+            full_path = os.path.join(directory, image_name)
+            image = pygame.image.load(full_path).convert_alpha()
+            frames[image_name.split('.')[0]] = image
+    return frames
+
+
+# Looks for images in multiple subdirs and imports them all
+def import_subdirs(*path):
+    frames = {}
+    for _, subdirs, __ in os.walk(os.path.join(*path)):
+        if subdirs:
+            for subdir in subdirs:
+                frames[subdir] = import_dirs(*path, subdir)
+    return frames
+
+
+# imports and slices tilemaps
+def import_tilemaps(cols, rows, *path):
+    frames = {}
+    surface = import_image(*path)
+    tile_width = surface.get_width() / cols
+    tile_height = surface.get_height() / rows
+    for col in range(cols):
+        for row in range(rows):
+            cut_rect = pygame.Rect(col * tile_width, row * tile_height, tile_width, tile_height)
+            cut_surf = pygame.Surface((tile_width, tile_height))
+            cut_surf.fill("magenta")
+            cut_surf.set_colorkey("magenta")
+            cut_surf.blit(surface, (0,0), cut_rect)
+            frames[(col, row)] = cut_surf
+    return frames
+
+def import_character(cols, rows, *path):
+    frame_dict = import_tilemaps(cols, rows, *path)
+    new_dict = {}
+    for row, direction in enumerate(('down', 'left', 'right', 'up')):
+        new_dict[direction] = [frame_dict[(col, row)] for col in range(cols)]
+        new_dict[f'{direction}_idle'] = [frame_dict[(1, row)]]
+    return new_dict
+
+def import_characters(*path):
+    new_dict = {}
+    for _, __, image_names in os.walk(os.path.join(*path)):
+        for image_name in image_names:
+            image_name = image_name.split('.')[0]
+            new_dict[image_name] = import_character(4,4,*path,image_name)
+        return new_dict
