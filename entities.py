@@ -1,15 +1,44 @@
 from settings import *
 
-# Player class, handles inputs, collisions, and movement
-class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, collision_sprites):
+class Entity(pygame.sprite.Sprite):
+    def __init__(self, pos, frames, groups):
         super().__init__(groups)
-        self.image = pygame.Surface((16, 16))
-        self.image.fill('red')
-        self.rect = self.image.get_frect(topleft=pos)
+
+        # Graphics
+        self.frame_index = 0
+        self.frames = frames
+        self.facing_direction = 'down'
+
+        # Movement
         self.direction = vector()
-        self.target_pos = vector(self.rect.topleft)
         self.speed = 125
+
+        # Sprite
+        self.hitbox = pygame.FRect(pos, (16, 16))
+        self.image = self.frames[self.get_state()][self.frame_index]
+        self.rect = self.image.get_frect(midbottom = self.hitbox.midbottom)
+
+    def animate(self, dt):
+        self.frame_index += ANIMATION_SPEED * dt
+        self.image = self.frames[self.get_state()][int(self.frame_index % len(self.frames[self.get_state()]))]
+
+    def get_state(self):
+        moving = bool(self.direction)
+        if moving:
+            if self.direction.x != 0:
+                self.facing_direction = 'right' if self.direction.x > 0 else 'left'
+            if self.direction.y != 0:
+                self.facing_direction = 'down' if self.direction.y > 0 else 'up'
+
+        return f"{self.facing_direction}{'' if moving else '_idle'}"
+
+
+
+# Player class, handles inputs, collisions, and movement
+class Player(Entity):
+    def __init__(self, pos, frames, groups, collision_sprites):
+        super().__init__(pos, frames, groups)
+        self.target_pos = vector(self.hitbox.topleft)
         self.collision_sprites = collision_sprites
 
     def input(self, collision_sprites):
@@ -30,9 +59,9 @@ class Player(pygame.sprite.Sprite):
 
         # Used to get rid of floaty movement and restricts player object to grid
         # Only set new target if we're already at the current target
-        if vector(self.rect.topleft) == self.target_pos and input_vector.length_squared() > 0:
+        if vector(self.hitbox.topleft) == self.target_pos and input_vector.length_squared() > 0:
             # Set up new rect for checking collisions
-            new_rect = self.rect.copy()
+            new_rect = self.hitbox.copy()
             new_rect.x += input_vector.x * TILE_SIZE
             new_rect.y += input_vector.y * TILE_SIZE
 
@@ -42,18 +71,21 @@ class Player(pygame.sprite.Sprite):
         self.direction = input_vector
 
     def move(self, dt):
-        current = vector(self.rect.topleft)
+        current = vector(self.hitbox.topleft)
         if current != self.target_pos:
             direction = (self.target_pos - current).normalize()
             step = direction * self.speed * dt
             if step.length() >= (self.target_pos - current).length():
-                self.rect.topleft = self.target_pos
+                self.hitbox.topleft = self.target_pos
             else:
-                self.rect.topleft = current + step
+                self.hitbox.topleft = current + step
+
+            self.rect.midbottom = self.hitbox.midbottom
 
     def update(self, dt):
         self.input(self.collision_sprites)
         self.move(dt)
+        self.animate(dt)
 
 # From .mtx Monsters layer, environment objects where monsters can appear
 class Monster_env(pygame.sprite.Sprite):

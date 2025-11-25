@@ -70,14 +70,14 @@ class Game:
             if obj.name == 'player' and obj.pos == player_start_pos:
                 self.player = Player(
                     pos = (obj.x, obj.y),
-                    #frames = self.world_animations['characters'][player_sprite],
+                    frames = self.world_animations['characters'][player_sprite],
                     groups = self.all_sprites,
                     collision_sprites = self.collision_sprites
                 )
 
 
     def transition_check(self):
-        sprites = [sprite for sprite in self.transition_sprites if sprite.rect.colliderect(self.player.rect)]
+        sprites = [sprite for sprite in self.transition_sprites if sprite.rect.colliderect(self.player.hitbox)]
         if sprites:
             for sprite in sprites:
                 target_map = sprite.target_map
