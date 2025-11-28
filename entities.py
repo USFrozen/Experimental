@@ -1,17 +1,18 @@
 from settings import *
 
 class Entity(pygame.sprite.Sprite):
-    def __init__(self, pos, frames, groups):
-        super().__init__(groups)
+    def __init__(self, pos, frames, group, facing_direction):
+        super().__init__(group)
 
         # Graphics
+        self.draw_layer = WORLD_DRAW_ORDER['main']
         self.frame_index = 0
         self.frames = frames
-        self.facing_direction = 'down'
+        self.facing_direction = facing_direction
 
         # Movement
         self.direction = vector()
-        self.speed = 125
+        self.speed = 100
 
         # Sprite
         self.hitbox = pygame.FRect(pos, (16, 16))
@@ -36,8 +37,8 @@ class Entity(pygame.sprite.Sprite):
 
 # Player class, handles inputs, collisions, and movement
 class Player(Entity):
-    def __init__(self, pos, frames, groups, collision_sprites):
-        super().__init__(pos, frames, groups)
+    def __init__(self, pos, frames, group, collision_sprites, facing_direction):
+        super().__init__(pos, frames, group, facing_direction)
         self.target_pos = vector(self.hitbox.topleft)
         self.collision_sprites = collision_sprites
 
@@ -87,28 +88,7 @@ class Player(Entity):
         self.move(dt)
         self.animate(dt)
 
-# From .mtx Monsters layer, environment objects where monsters can appear
-class Monster_env(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obj, tmx_data):
-        super().__init__(groups)
-
-        if obj.gid:
-            self.image = tmx_data.get_tile_image_by_gid(obj.gid)
-        else:
-            self.image = pygame.Surface((16, 16))
-            self.image.fill('magenta')
-
-        self.rect = self.image.get_frect(topleft=pos)
-
-# From .mtx Entities layer, used for objects that can be interacted with
-class MapEntity(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, obj, tmx_data):
-        super().__init__(groups)
-
-        if obj.gid:
-            self.image = tmx_data.get_tile_image_by_gid(obj.gid)
-        else:
-            self.image = pygame.Surface((16, 16))
-            self.image.fill('magenta')
-
-        self.rect = self.image.get_frect(topleft=pos)
+# NPC class
+class NPCs(Entity):
+    def __init__(self, pos, frames, group, collision_sprites, facing_direction):
+        super().__init__(pos, frames, group, facing_direction)
