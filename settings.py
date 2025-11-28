@@ -23,5 +23,13 @@ player_house = os.path.join(base_dir, 'assets', 'TMX', 'player_house.tmx')
 characters = os.path.join(base_dir, 'assets', 'PNG', 'characters')
 tile_width = 24
 tile_height = 24
-ANIMATION_SPEED = 6
-player_sprite = "Character_063"
+ANIMATION_SPEED = 10
+player_sprite = "Character_018"
+
+# Sprite layer draw order
+WORLD_DRAW_ORDER = {
+    'bg': 0,
+    'decoration':1,
+    'main': 2,
+    'fg': 3
+}
