@@ -1,5 +1,5 @@
 from settings import *
-from sprites import Sprite, TransitionSprite, CollisionSprite, AnimatedSprite
+from sprites import Sprite, TransitionSprite, CollisionSprite, AnimatedSprite, MonsterEnv, MapObject
 from entities import *
 from groups import AllSprites
 from helpers import *
@@ -45,34 +45,72 @@ class Game:
     def setup(self, tmx_map, player_start_pos):
         for layer in ['BG', 'BG2', 'BG3']:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
-                Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
+                Sprite(
+                    pos = (x * TILE_SIZE, y * TILE_SIZE),
+                    surf = surf,
+                    group = self.all_sprites,
+                    layer = WORLD_DRAW_ORDER['bg']
+                )
 
         # Monster environment objects, areas and tiles where monsters can spawn
         for obj in tmx_map.get_layer_by_name('Monsters'):
-            self.monster_env = Monster_env((obj.x, obj.y), self.all_sprites, obj, tmx_map)
+            self.monster_env = MonsterEnv(
+                pos = (obj.x, obj.y),
+                group = self.all_sprites,
+                obj = obj,
+                tmx_data = tmx_map
+            )
 
         # Collision objects, stops player from walking in area
         for obj in tmx_map.get_layer_by_name('Collisions'):
-            self.collision = CollisionSprite((obj.x, obj.y), (obj.width, obj.height), self.collision_sprites)
+            self.collision = CollisionSprite(
+                pos = (obj.x, obj.y),
+                size = (obj.width, obj.height),
+                group = self.collision_sprites,
+                layer = WORLD_DRAW_ORDER['bg']
+            )
 
         # Transition objects, warps player to target map
         for obj in tmx_map.get_layer_by_name('Transitions'):
             if obj.name == 'transition':
-                self.transition = TransitionSprite((obj.x, obj.y), (obj.width, obj.height), obj.properties['target_map'], obj.properties['current_map'], self.transition_sprites)
-
-        # All remaining entities in layer that are not player objects
-        for obj in tmx_map.get_layer_by_name('Entities'):
-            if obj.name != 'player':
-                self.entities = MapEntity((obj.x, obj.y), self.all_sprites, obj, tmx_map)
-
-        # Player character
-        for obj in tmx_map.get_layer_by_name('Entities'):
-            if obj.name == 'player' and obj.pos == player_start_pos:
-                self.player = Player(
+                self.transition = TransitionSprite(
                     pos = (obj.x, obj.y),
-                    frames = self.world_animations['characters'][player_sprite],
-                    groups = self.all_sprites,
-                    collision_sprites = self.collision_sprites
+                    size = (obj.width, obj.height),
+                    target_map = obj.properties['target_map'],
+                    current_map = obj.properties['current_map'],
+                    group = self.transition_sprites,
+                    layer = WORLD_DRAW_ORDER['bg']
+                )
+
+        # All remaining entities in layer that are not player or NPC objects
+        for obj in tmx_map.get_layer_by_name('Entities'):
+            if obj.name != 'player' and obj.name != 'npc':
+                self.entities = MapObject(
+                    pos = (obj.x, obj.y),
+                    group = self.all_sprites,
+                    obj = obj,
+                    tmx_data = tmx_map,
+                    layer=WORLD_DRAW_ORDER['main']
+                )
+
+        # Player and NPCs
+        for obj in tmx_map.get_layer_by_name('Entities'):
+            if obj.name == 'player':
+                if obj.pos == player_start_pos:
+                    self.player = Player(
+                        pos = (obj.x, obj.y),
+                        frames = self.world_animations['characters'][player_sprite],
+                        group = self.all_sprites,
+                        collision_sprites = self.collision_sprites,
+                        facing_direction = obj.properties['direction'],
+                    )
+            elif obj.name == 'npc':
+                self.NPCs(
+                    pos=(obj.x, obj.y),
+                    frames = self.world_animations['characters'][obj.properties['sprite']],
+                    group = self.all_sprites,
+                    collision_sprites = self.collision_sprites,
+                    facing_direction = obj.properties['direction'],
                 )
 
 
