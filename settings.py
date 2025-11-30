@@ -26,6 +26,11 @@ tile_height = 24
 ANIMATION_SPEED = 10
 player_sprite = "Character_018"
 
+# Fonts
+dialogue_font = os.path.join(base_dir, 'assets', 'FONTS', 'NeatpixelsMinimal.ttf')
+dialogue_font_size = 10
+TEXT_SPEED = 30
+
 # Sprite layer draw order
 WORLD_DRAW_ORDER = {
     'bg': 0,

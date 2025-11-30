@@ -5,7 +5,6 @@ class Entity(pygame.sprite.Sprite):
         super().__init__(group)
 
         # Graphics
-        self.draw_layer = WORLD_DRAW_ORDER['main']
         self.frame_index = 0
         self.frames = frames
         self.facing_direction = facing_direction
@@ -13,11 +12,25 @@ class Entity(pygame.sprite.Sprite):
         # Movement
         self.direction = vector()
         self.speed = 100
+        self.blocked = False
 
         # Sprite
         self.hitbox = pygame.FRect(pos, (16, 16))
         self.image = self.frames[self.get_state()][self.frame_index]
         self.rect = self.image.get_frect(midbottom = self.hitbox.midbottom)
+
+        # Draw order
+        self.draw_layer = WORLD_DRAW_ORDER['main']
+        self.y_sort = self.rect.centery
+
+    # Blocks entity movement and input for use in dialogue system
+    def block(self):
+        self.blocked = True
+        self.direction = vector(0,0)
+
+    # Unblocks entity
+    def unblock(self):
+        self.blocked = False
 
     def animate(self, dt):
         self.frame_index += ANIMATION_SPEED * dt
@@ -32,6 +45,13 @@ class Entity(pygame.sprite.Sprite):
                 self.facing_direction = 'down' if self.direction.y > 0 else 'up'
 
         return f"{self.facing_direction}{'' if moving else '_idle'}"
+
+    def change_facing_direction(self, target_position):
+        relationship = vector(target_position) - vector(self.rect.center)
+        if abs(relationship.y) < 16:
+            self.facing_direction = 'right' if relationship.x > 0 else 'left'
+        else:
+            self.facing_direction = 'down' if relationship.y > 0 else 'up'
 
 
 
@@ -53,10 +73,6 @@ class Player(Entity):
             input_vector.y -= 1
         elif buttons[pygame.K_DOWN]:
             input_vector.y += 1
-        elif buttons[pygame.K_z]:
-            pass
-        elif buttons[pygame.K_x]:
-            pass
 
         # Used to get rid of floaty movement and restricts player object to grid
         # Only set new target if we're already at the current target
@@ -66,10 +82,12 @@ class Player(Entity):
             new_rect.x += input_vector.x * TILE_SIZE
             new_rect.y += input_vector.y * TILE_SIZE
 
-            if not any(new_rect.colliderect(sprite.rect) for sprite in collision_sprites):
+            # if sprite has hitbox, uses hitbox for collision. otherwise uses sprite rect. fixes NPC collisions.
+            if not any(new_rect.colliderect(getattr(sprite, 'hitbox', sprite.rect)) for sprite in collision_sprites):
                 self.target_pos = vector(new_rect.topleft)
 
         self.direction = input_vector
+
 
     def move(self, dt):
         current = vector(self.hitbox.topleft)
@@ -84,11 +102,20 @@ class Player(Entity):
             self.rect.midbottom = self.hitbox.midbottom
 
     def update(self, dt):
-        self.input(self.collision_sprites)
-        self.move(dt)
+        self.y_sort = self.rect.centery
+        if not self.blocked:
+            self.input(self.collision_sprites)
+            self.move(dt)
         self.animate(dt)
 
 # NPC class
-class NPCs(Entity):
-    def __init__(self, pos, frames, group, collision_sprites, facing_direction):
+class NPC(Entity):
+    def __init__(self, pos, frames, group, facing_direction, npc_data):
         super().__init__(pos, frames, group, facing_direction)
+        self.npc_data = npc_data
+
+    def get_dialogue(self):
+        return self.npc_data['dialogue'][f'{'defeated' if self.npc_data['defeated'] else 'default'}']
+
+    def update(self, dt):
+        self.animate(dt)
