@@ -74,8 +74,12 @@ class Player(Entity):
         elif buttons[pygame.K_DOWN]:
             input_vector.y += 1
 
+
         # Used to get rid of floaty movement and restricts player object to grid
         # Only set new target if we're already at the current target
+        if vector(self.hitbox.topleft) == self.target_pos:
+            self.direction = input_vector
+
         if vector(self.hitbox.topleft) == self.target_pos and input_vector.length_squared() > 0:
             # Set up new rect for checking collisions
             new_rect = self.hitbox.copy()
@@ -86,7 +90,6 @@ class Player(Entity):
             if not any(new_rect.colliderect(getattr(sprite, 'hitbox', sprite.rect)) for sprite in collision_sprites):
                 self.target_pos = vector(new_rect.topleft)
 
-        self.direction = input_vector
 
 
     def move(self, dt):
