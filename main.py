@@ -150,6 +150,8 @@ class Game:
                 new_tmx = self.tmx_maps[target_map]
 
                 # extract player_start_pos from player spawn object
+                player_start_pos = None
+                # noinspection PyTypeChecker
                 for obj in new_tmx.get_layer_by_name('Entities'):
                     if obj.name == 'player':
                         player_start_pos = obj.pos

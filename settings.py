@@ -9,13 +9,13 @@ import os
 
 # Pygame-CE settings
 WINDOW_WIDTH, WINDOW_HEIGHT = 720, 720
-#WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720
+RENDER_SCALE = 2
 BACKGROUND_COLOR = pygame.Color('black')
 
 # PyTMX settings
 TILE_SIZE = 16
 base_dir = os.path.dirname(__file__) # Gets current directory
-# Using os.path to point to assets so this hopefully wont break when not on Linux
+# Using os.path to point to assets so this hopefully won't break when not on Linux
 world = os.path.join(base_dir, 'assets', 'TMX', 'world.tmx')
 player_house = os.path.join(base_dir, 'assets', 'TMX', 'player_house.tmx')
 
@@ -24,7 +24,7 @@ characters = os.path.join(base_dir, 'assets', 'PNG', 'characters')
 tile_width = 24
 tile_height = 24
 ANIMATION_SPEED = 10
-player_sprite = "Character_018"
+player_sprite = "Character_019"
 
 # Fonts
 dialogue_font = os.path.join(base_dir, 'assets', 'FONTS', 'NeatpixelsMinimal.ttf')

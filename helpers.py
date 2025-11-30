@@ -1,5 +1,4 @@
 from settings import *
-import re
 
 # Import Functions
 # Used for importing single image files
@@ -14,8 +13,10 @@ def import_dirs(*path):
     frames = []
     for directory, subdirectory, image_names in os.walk(*path):
         def num_key(name):
-            match = re.match(r"(\d+)", name)
-            return int(match.group(1)) if match else float("inf")
+            try:
+                return int(name)
+            except:
+                return float("inf")
 
         for image_name in sorted(image_names, key=num_key):
             full_path = os.path.join(directory, image_name)
@@ -72,7 +73,7 @@ def import_characters(*path):
         for image_name in image_names:
             image_name = image_name.split('.')[0]
             new_dict[image_name] = import_character(4,4,*path,image_name)
-        return new_dict
+    return new_dict
 
 # Game Functions
 # Transition screen effect used before and after all sprites unload and load from new map

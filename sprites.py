@@ -46,7 +46,7 @@ class MonsterEnv(Sprite):
 
         self.rect = self.image.get_frect(topleft=pos)
         self.draw_layer = layer
-        self.y_sort -= 2
+        self.y_sort -= 18
 
 # From .mtx Entities layer, used for objects that can be interacted with
 class MapObject(Sprite):
