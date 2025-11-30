@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="384">
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="387">
  <tileset firstgid="1" source="../TSX/FD_Forest.tsx"/>
  <tileset firstgid="1281" source="../TSX/FD_Village.tsx"/>
  <tileset firstgid="2625" source="../TSX/RA_Village.tsx"/>
@@ -391,6 +391,15 @@
    <properties>
     <property name="direction" value="down"/>
     <property name="pos" value="player_house"/>
+   </properties>
+  </object>
+  <object id="385" name="npc" x="384" y="368" width="16" height="16">
+   <properties>
+    <property name="change_direction" type="bool" value="true"/>
+    <property name="direction" value="left"/>
+    <property name="npc_id" value="0001"/>
+    <property name="radius" type="int" value="64"/>
+    <property name="sprite" value="Character_066"/>
    </properties>
   </object>
  </objectgroup>

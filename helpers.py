@@ -1,24 +1,7 @@
 from settings import *
 import re
 
-
-# Transition screen effect used before and after all sprites unload and load from new map
-def screen_fade(self, fade_in=True, speed=15):
-    fade_surface = pygame.Surface(self.screen.get_size())
-    fade_surface.fill(BACKGROUND_COLOR)
-    if fade_in:
-        for alpha in range(255, -1, -speed):
-            fade_surface.set_alpha(alpha)
-            self.screen.blit(fade_surface, (0, 0))
-            pygame.display.update()
-            self.clock.tick(60)
-    else:
-        for alpha in range(0, 256, speed):
-            fade_surface.set_alpha(alpha)
-            self.screen.blit(fade_surface, (0, 0))
-            pygame.display.update()
-            self.clock.tick(60)
-
+# Import Functions
 # Used for importing single image files
 def import_image(*path, alpha=True, ext="png"):
     full_path = os.path.join(*path) + f'.{ext}'
@@ -40,7 +23,6 @@ def import_dirs(*path):
             frames.append(image)
     return frames
 
-
 # Imports all images but preserves names
 def import_dir_dict(*path):
     frames = {}
@@ -51,7 +33,6 @@ def import_dir_dict(*path):
             frames[image_name.split('.')[0]] = image
     return frames
 
-
 # Looks for images in multiple subdirs and imports them all
 def import_subdirs(*path):
     frames = {}
@@ -60,7 +41,6 @@ def import_subdirs(*path):
             for subdir in subdirs:
                 frames[subdir] = import_dirs(*path, subdir)
     return frames
-
 
 # imports and slices tilemaps
 def import_tilemaps(cols, rows, *path):
@@ -93,3 +73,32 @@ def import_characters(*path):
             image_name = image_name.split('.')[0]
             new_dict[image_name] = import_character(4,4,*path,image_name)
         return new_dict
+
+# Game Functions
+# Transition screen effect used before and after all sprites unload and load from new map
+def screen_fade(self, fade_in=True, speed=15):
+    fade_surface = pygame.Surface(self.screen.get_size())
+    fade_surface.fill(BACKGROUND_COLOR)
+    if fade_in:
+        for alpha in range(255, -1, -speed):
+            fade_surface.set_alpha(alpha)
+            self.screen.blit(fade_surface, (0, 0))
+            pygame.display.update()
+            self.clock.tick(60)
+    else:
+        for alpha in range(0, 256, speed):
+            fade_surface.set_alpha(alpha)
+            self.screen.blit(fade_surface, (0, 0))
+            pygame.display.update()
+            self.clock.tick(60)
+
+def check_connections(distance, entity, target, tollerance = 16):
+    relationship = vector(target.rect.center) - vector(entity.rect.center)
+    if relationship.length() < distance:
+        if (
+            entity.facing_direction == 'left' and relationship.x < 0 and abs(relationship.y) < tollerance or
+            entity.facing_direction == 'right' and relationship.x > 0 and abs(relationship.y) < tollerance or
+            entity.facing_direction == 'up' and relationship.y < 0 and abs(relationship.x) < tollerance or
+            entity.facing_direction == 'down' and relationship.y > 0 and abs(relationship.x) < tollerance
+        ):
+            return True

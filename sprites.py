@@ -6,6 +6,7 @@ class Sprite(pygame.sprite.Sprite):
         self.image = surf
         self.rect = self.image.get_frect(topleft = pos)
         self.draw_layer = layer
+        self.y_sort = self.rect.centery
 
 class AnimatedSprite(Sprite):
     def __init__(self, pos, frames, group, layer = WORLD_DRAW_ORDER['main']):
@@ -18,7 +19,6 @@ class AnimatedSprite(Sprite):
 
     def update(self, dt):
         self.animate(dt)
-
 
 class TransitionSprite(Sprite):
     def __init__(self, pos, size, target_map, current_map, group, layer = WORLD_DRAW_ORDER['main']):
@@ -33,9 +33,10 @@ class CollisionSprite(Sprite):
         super().__init__(pos, surf, group, layer)
 
 # From .mtx Monsters layer, environment objects where monsters can appear
-class MonsterEnv(pygame.sprite.Sprite):
+class MonsterEnv(Sprite):
     def __init__(self, pos, group, obj, tmx_data, layer = WORLD_DRAW_ORDER['main']):
-        super().__init__(group)
+        surf = pygame.Surface((16, 16))
+        super().__init__(pos, surf, group, layer)
 
         if obj.gid:
             self.image = tmx_data.get_tile_image_by_gid(obj.gid)
@@ -45,11 +46,13 @@ class MonsterEnv(pygame.sprite.Sprite):
 
         self.rect = self.image.get_frect(topleft=pos)
         self.draw_layer = layer
+        self.y_sort -= 2
 
 # From .mtx Entities layer, used for objects that can be interacted with
-class MapObject(pygame.sprite.Sprite):
+class MapObject(Sprite):
     def __init__(self, pos, group, obj, tmx_data, layer = WORLD_DRAW_ORDER['main']):
-        super().__init__(group)
+        surf = pygame.Surface((16, 16))
+        super().__init__(pos, surf, group, layer)
 
         if obj.gid:
             self.image = tmx_data.get_tile_image_by_gid(obj.gid)
