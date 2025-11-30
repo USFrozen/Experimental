@@ -7,9 +7,9 @@ zstd>=1.5.7.2
 
 --- To Do: ---
 - Character and NPC sprite sheet splitter
-- NPC(s)
-- Basic GUI
-- Dialogue system
+- NPC(s) -- IN PROGRESS
+- Basic GUI -- IN PROGRESS
+- Dialogue system -- IN PROGRESS
 - (Very basic) combat system
 - Inventory & equipment system
 - Save/load system
