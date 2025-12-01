@@ -133,6 +133,7 @@ class Game:
     def transition_check(self):
         sprites = [sprite for sprite in self.transition_sprites if sprite.rect.colliderect(self.player.hitbox)]
         if sprites:
+            self.player.block()
             for sprite in sprites:
                 target_map = sprite.target_map
                 current_map = sprite.current_map
@@ -162,6 +163,7 @@ class Game:
 
                 # fade in
                 screen_fade(self, fade_in=True)
+                self.player.unblock()
 
     def input(self, current_time):
         keys = pygame.key.get_just_pressed()
