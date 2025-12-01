@@ -75,6 +75,13 @@ def import_characters(*path):
             new_dict[image_name] = import_character(4,4,*path,image_name)
     return new_dict
 
+def import_tmx(*path):
+    tmx_dict = {}
+    for directory, subdirectory, files in os.walk(os.path.join(*path)):
+        for file in files:
+            tmx_dict[file.split('.')[0]] = load_pygame(os.path.join(directory, file))
+    return tmx_dict
+
 # Game Functions
 # Transition screen effect used before and after all sprites unload and load from new map
 def screen_fade(self, fade_in=True, speed=15):

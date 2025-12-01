@@ -14,10 +14,9 @@ BACKGROUND_COLOR = pygame.Color('black')
 
 # PyTMX settings
 TILE_SIZE = 16
-base_dir = os.path.dirname(__file__) # Gets current directory
 # Using os.path to point to assets so this hopefully won't break when not on Linux
-world = os.path.join(base_dir, 'assets', 'TMX', 'world.tmx')
-player_house = os.path.join(base_dir, 'assets', 'TMX', 'player_house.tmx')
+base_dir = os.path.dirname(__file__) # Gets current directory
+MAP_DIRECTORY = os.path.join(base_dir, 'assets', 'TMX')
 
 # Animation settings
 characters = os.path.join(base_dir, 'assets', 'PNG', 'characters')

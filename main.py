@@ -43,10 +43,7 @@ class Game:
 
     # Dictionaries used to load assets
     def import_assets(self):
-        self.tmx_maps = {
-            'world': load_pygame(world),
-            'player_house': load_pygame(player_house)
-        }
+        self.tmx_maps = import_tmx(MAP_DIRECTORY)
 
         self.world_animations = {
             'characters': import_characters(characters),
@@ -59,6 +56,11 @@ class Game:
     # Generates object class instances based on data in Tiled maps
     # Each map layer is being looked at individually by name so names need to be consistent between maps
     def setup(self, tmx_map, player_start_pos):
+        # Makes sure all groups are empty before adding new sprites to groups
+        for group in (self.all_sprites, self.collision_sprites, self.transition_sprites, self.npc_sprites, self.ui_group):
+            group.empty()
+
+        # Sets up all background items like floor/wall tiles and non-interactive decorations
         for layer in ['BG', 'BG2', 'BG3']:
             for x, y, surf in tmx_map.get_layer_by_name(layer).tiles():
                 Sprite(
@@ -71,7 +73,7 @@ class Game:
         # Monster environment objects, areas and tiles where monsters can spawn
         for obj in tmx_map.get_layer_by_name('Monsters'):
             self.monster_env = MonsterEnv(
-                pos=(obj.x, obj.y),
+                pos=(obj.x, obj.y + 3),
                 group=self.all_sprites,
                 obj=obj,
                 tmx_data=tmx_map,
@@ -130,6 +132,7 @@ class Game:
                     npc_data=NPC_DATA[obj.properties['npc_id']]
                 )
 
+    # Checks if player is in contact with a transition sprite, loads new map
     def transition_check(self):
         sprites = [sprite for sprite in self.transition_sprites if sprite.rect.colliderect(self.player.hitbox)]
         if sprites:
@@ -165,6 +168,7 @@ class Game:
                 screen_fade(self, fade_in=True)
                 self.player.unblock()
 
+    # Allows player input otherwise blocked, used for special events like advancing dialogue
     def input(self, current_time):
         keys = pygame.key.get_just_pressed()
 
