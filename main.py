@@ -6,7 +6,7 @@ from helpers import *
 from dialogue import DialogueTree
 from game_data import NPC_DATA, MONSTER_DATA, PLAYER_DATA, EQUIPMENT_DATA
 from combatants import Monster, PlayerCharacter
-from bestiary import Bestiary
+#from bestiary import Bestiary
 
 
 class Game:
@@ -144,7 +144,8 @@ class Game:
                     frames=self.world_animations['characters'][obj.properties['sprite']],
                     group=(self.all_sprites, self.npc_sprites, self.collision_sprites),
                     facing_direction=obj.properties['direction'],
-                    npc_data=NPC_DATA[obj.properties['npc_id']]
+                    npc_data=NPC_DATA[obj.properties['npc_id']],
+                    player = self.player
                 )
 
     # Checks if player is in contact with a transition sprite, loads new map
