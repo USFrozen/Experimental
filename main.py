@@ -1,10 +1,12 @@
 from settings import *
 from sprites import Sprite, TransitionSprite, CollisionSprite, AnimatedSprite, MonsterEnv, MapObject
-from entities import *
+from entities import Player, NPC
 from groups import AllSprites
 from helpers import *
 from dialogue import DialogueTree
-from game_data import *
+from game_data import NPC_DATA, MONSTER_DATA, PLAYER_DATA, EQUIPMENT_DATA
+from combatants import Monster, PlayerCharacter
+from bestiary import Bestiary
 
 
 class Game:
@@ -20,6 +22,10 @@ class Game:
         # Sets pygame window title
         pygame.display.set_caption("NET-202 Final Project Demo")
 
+        self.dummy_monsters = {
+            0: Monster('Kermit', 10)
+        }
+
         # Object groups, used in drawing objects to screen
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
@@ -27,8 +33,11 @@ class Game:
         self.npc_sprites = pygame.sprite.Group()
         self.ui_group = pygame.sprite.Group()
 
-        # Stores current dialogue tree
+        # Stores current dialogue tree state
         self.dialogue_tree = None
+
+        # Battle state
+        self.battle = None
 
         # Cooldown variables for interaction (prevents instant restart)
         self.can_interact = True
@@ -51,7 +60,13 @@ class Game:
 
         self.fonts = {
             'dialogue': pygame.font.Font(dialogue_font, dialogue_font_size),
+            'regular': pygame.font.Font(dialogue_font, regular_font_size),
+            'small': pygame.font.Font(dialogue_font, small_font_size),
+            'bold': pygame.font.Font(bold_font, bold_font_size),
         }
+
+        # will implement bestiary later
+        #self.bestiary = Bestiary(self.player_monsters, self.fonts)
 
     # Generates object class instances based on data in Tiled maps
     # Each map layer is being looked at individually by name so names need to be consistent between maps
@@ -227,6 +242,11 @@ class Game:
                 self.dialogue_tree.update(dt)
                 if not self.dialogue_tree.active:
                     self.dialogue_tree = None  # Dialogue is closed here!
+
+            if self.battle:
+                self.battle.update(dt)
+                if not self.battle.active:
+                    self.battle = None
 
             self.all_sprites.update(dt)
             self.ui_group.update(dt)
