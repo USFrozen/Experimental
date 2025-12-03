@@ -13,6 +13,7 @@ class Entity(pygame.sprite.Sprite):
         self.direction = vector()
         self.speed = 100
         self.blocked = False
+        self.is_moving = False
 
         # Sprite
         self.hitbox = pygame.FRect(pos, (16, 16))
@@ -95,14 +96,15 @@ class Player(Entity):
     def move(self, dt):
         current = vector(self.hitbox.topleft)
         if current != self.target_pos:
+            self.is_moving = True
             direction = (self.target_pos - current).normalize()
             step = direction * self.speed * dt
             if step.length() >= (self.target_pos - current).length():
                 self.hitbox.topleft = self.target_pos
             else:
                 self.hitbox.topleft = current + step
-
             self.rect.midbottom = self.hitbox.midbottom
+        self.is_moving = False
 
     def update(self, dt):
         self.y_sort = self.rect.centery
