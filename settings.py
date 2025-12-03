@@ -27,7 +27,11 @@ player_sprite = "Character_019"
 
 # Fonts
 dialogue_font = os.path.join(base_dir, 'assets', 'FONTS', 'NeatpixelsMinimal.ttf')
+bold_font = os.path.join(base_dir, 'assets', 'FONTS', 'neatpixels-boss.ttf')
 dialogue_font_size = 10
+regular_font_size = 10
+small_font_size = 8
+bold_font_size = 12
 TEXT_SPEED = 30
 
 # Sprite layer draw order
