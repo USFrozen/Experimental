@@ -7,7 +7,7 @@ NPC_DATA = {
             ]
         },
         'directions': ['down', 'left', 'up', 'right'],
-        'look_around': False,
+        'look_around': True,
         'defeated': False,
     }
 }
@@ -22,11 +22,14 @@ MONSTER_DATA = {
             'defense': 8,
             'recovery': 5,
             'speed': 1
-        }
+        },
+        'abilities': {0: 'scratch', 1: 'bite'}
     },
 }
 
-MONSTER_ATTACK_DATA = { #NOT YET DEFINED
+MONSTER_ATTACK_DATA = {
+    'scratch': {'target': 'opponent', 'amount': 1, 'cost': 20, 'element': 'normal'},
+    'bite':    {'target': 'opponent', 'amount': 1.2, 'cost': 20, 'element': 'normal'}
     }
 
 PLAYER_DATA = {
