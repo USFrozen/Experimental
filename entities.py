@@ -1,4 +1,6 @@
 from settings import *
+import random
+from helpers import Timer
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, pos, frames, group, facing_direction):
@@ -115,12 +117,37 @@ class Player(Entity):
 
 # NPC class
 class NPC(Entity):
-    def __init__(self, pos, frames, group, facing_direction, npc_data):
+    def __init__(self, pos, frames, group, facing_direction, npc_data, player):
         super().__init__(pos, frames, group, facing_direction)
         self.npc_data = npc_data
+        self.player = player
+
+        # movement
+        self.has_moved = False
+        self.can_look = True
+        self.look_directions = npc_data['directions']
+
+        self.timers = {
+            'look': Timer(random.randint(1500,8000), autostart = True, repeat = True, func = self.random_look_direction),
+        }
+
+    def random_look_direction(self):
+        if self.can_look:
+            self.facing_direction = random.choice(self.look_directions)
+
+    def move(self, dt):
+        if not self.has_moved and self.direction:
+            if not self.rect.colliderect(self.player.hitbox):
+                self.rect.center += self.direction * self.speed * dt
+                self.hitbox.center = self.player.rect.center
 
     def get_dialogue(self):
         return self.npc_data['dialogue'][f'{'defeated' if self.npc_data['defeated'] else 'default'}']
 
     def update(self, dt):
+        for timer in self.timers.values():
+            timer.update()
+
         self.animate(dt)
+        if self.npc_data['look_around']:
+            self.move(dt)
