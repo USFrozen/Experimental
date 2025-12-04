@@ -1,4 +1,4 @@
-from game_data import MONSTER_DATA, MONSTER_ATTACK_DATA, PLAYER_DATA, EQUIPMENT_DATA, PLAYER_STARTER_EQUIPMENT
+from game_data import MONSTER_DATA, MONSTER_ATTACK_DATA, PLAYER_DATA, EQUIPMENT_DATA
 from random import randint
 
 
@@ -88,10 +88,10 @@ class Monster(BattleEntity):
 
 
 class PlayerCharacter(BattleEntity):
-    def __init__(self, name, level, equipment_data=EQUIPMENT_DATA, starter_equipment=PLAYER_STARTER_EQUIPMENT):
+    def __init__(self, name, level, equipment_data = EQUIPMENT_DATA):
         player_base_data = PLAYER_DATA[name]['stats']
         super().__init__(name, level, player_base_data, player_base_data['max_health'], player_base_data['max_energy'])
-        self.equipment = starter_equipment
+        self.equipment = PLAYER_DATA[name]['equipment']
         self._equipment_data = equipment_data
 
         # experience
@@ -114,12 +114,9 @@ class PlayerCharacter(BattleEntity):
         equipment_bonus = self.get_equipment_bonus(stat)
         return base_value + equipment_bonus
 
-    # placeholder for player "magic" skills, currently a copy of the monster skill system.
-    # not sure how they will gain elemental damage skills yet, will come back to this later
-    # for now we are just going to ignore elements and elemental damage
-    """
+
     def reduce_energy(self, attack):
-        self.energy -= PLAYER_MAGIC_DATA[attack]['cost']
+        self.energy -= PLAYER_DATA[attack]['cost']
 
     def get_abilities(self, all=True):
         learned_abilities = [ability for lvl, ability in self.abilities.items() if self.level >= lvl]
@@ -127,8 +124,7 @@ class PlayerCharacter(BattleEntity):
             return learned_abilities
         else:
             return [ability for ability in learned_abilities if
-                    PLAYER_MAGIC_DATA.get(ability, {}).get('cost', float('inf')) <= self.energy]
-    """
+                    PLAYER_DATA.get(ability, {}).get('cost', float('inf')) <= self.energy]
 
     # parses player data for current weapon and stats, returns wep for use in damage step
     # basically bridges equipment and equipped data sets so we don't duplicate data
