@@ -28,8 +28,8 @@ MONSTER_DATA = {
 }
 
 MONSTER_ATTACK_DATA = {
-    'scratch': {'target': 'opponent', 'amount': 1, 'cost': 20, 'element': 'normal'},
-    'bite':    {'target': 'opponent', 'amount': 1.2, 'cost': 20, 'element': 'normal'}
+    'scratch': {'target': 'opponent', 'damage_range': (2,4), 'energy_cost': 15, 'element': 'normal'},
+    'bite':    {'target': 'opponent', 'damage_range': (5,10), 'energy_cost': 20, 'element': 'normal'}
     }
 
 PLAYER_DATA = {
@@ -41,6 +41,11 @@ PLAYER_DATA = {
             'defense': 5,
             'recovery': 5,
             'speed': 1
+        },
+        'equipment': {
+            'weapon': 'rusty_sword',
+            'armor': 'cloth_tunic',
+            'accessory': 'adventurer_ring',
         }
     }
 }
@@ -101,8 +106,7 @@ EQUIPMENT_DATA = {
     }
 }
 
-PLAYER_STARTER_EQUIPMENT = {
-            'weapon': 'rusty_sword',
-            'armor': 'cloth_tunic',
-            'accessory': 'adventurer_ring',
-        }
+PLAYER_ATTACK_DATA = {
+    'fists':       {'target': 'opponent', 'damage_range': (2,4), 'energy_cost': 10, 'element': 'normal'},
+    'rusty_sword': {'target': 'opponent', 'damage_range': (5,10), 'energy_cost': 20, 'element': 'normal'}
+    }
